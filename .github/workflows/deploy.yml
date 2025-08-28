@@ -2,16 +2,12 @@ name: Deploy Astro site to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # Change to "master" if your repo uses master
+    branches: ["main"] # change to "master" if needed
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,10 +23,10 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Upload artifact
+      - name: Upload dist folder
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./dist # Astro puts built files here
+          path: ./dist
 
   deploy:
     needs: build
@@ -38,9 +34,6 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
