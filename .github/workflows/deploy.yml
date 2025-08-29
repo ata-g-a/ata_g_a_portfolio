@@ -2,7 +2,7 @@ name: Deploy Astro site to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # change if your branch is different
+    branches: [ "main" ]   # change if your branch is different
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
         run: npm run build
 
       - name: Upload dist folder
-        uses: actions/upload-artifact@v4 # ✅ updated action
+        uses: actions/upload-artifact@v4   # ✅ updated action
         with:
           name: github-pages
           path: ./dist
@@ -41,19 +41,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # ✅ updated action
-
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-
-// https://astro.build/config
-export default defineConfig({
-  integrations: [tailwind()],
-  vite: {
-    build: {
-      rollupOptions: {
-        external: ["astro-icon"],
-      },
-    },
-  },
-});
+        uses: actions/deploy-pages@v4   # ✅ updated action
