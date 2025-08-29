@@ -46,6 +46,20 @@ jobs:
           # Show any remaining symlinks (should be empty)
           echo "Symlinks remaining in dist:"
           find dist -type l
+
+      # ✅ Check for hard links
+      - name: Check for hard links in dist
+        run: |
+          echo "Hard links in dist (nlink > 1):"
+          find dist -type f -links +1 -exec ls -l {} +
+
+      - name: Upload dist folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: dist
+          if-no-files-found: error
+          
       - name: Upload dist folder
         uses: actions/upload-artifact@v4
         with:
