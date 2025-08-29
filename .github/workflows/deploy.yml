@@ -18,19 +18,32 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci   # faster + clean install
+        run: npm ci
 
       - name: Build site
         run: npm run build
 
+      # ✅ Add a .nojekyll file to dist
       - name: Add .nojekyll
         run: echo "" > dist/.nojekyll
+
+      # ✅ Debug: list dist contents
+      - name: Debug dist folder
+        run: ls -R dist
+
+      # ✅ Clean dist folder (remove symlinks/dev artifacts)
+      - name: Clean dist folder
+        run: |
+          find dist -type l -delete
+          rm -rf dist/.astro
+          rm -rf dist/node_modules
 
       - name: Upload dist folder
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
-          path: dist   # ✅ ONLY dist, not the whole repo
+          path: dist
+          if-no-files-found: error   # fail fast if dist is empty
 
   deploy:
     needs: build
