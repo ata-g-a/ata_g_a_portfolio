@@ -52,7 +52,12 @@ jobs:
         run: |
           echo "Hard links in dist (nlink > 1):"
           find dist -type f -links +1 -exec ls -l {} +
-          
+      
+      - name: List all files in dist (with details)
+        run: |
+          find dist -exec ls -l {} +
+
+      
       - name: Upload dist folder
         uses: actions/upload-artifact@v4
         with:
@@ -70,8 +75,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages-${{ github.run_number }}
+      - name: Minimal dist test
+        run: |
+          rm -rf dist
+          mkdir dist
+          echo "hello" > dist/index.html
