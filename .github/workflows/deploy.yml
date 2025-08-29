@@ -2,7 +2,7 @@ name: Deploy Astro site to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]   # change if your branch is different
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -18,16 +18,19 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci   # faster + clean install
 
       - name: Build site
         run: npm run build
 
+      - name: Add .nojekyll
+        run: echo "" > dist/.nojekyll
+
       - name: Upload dist folder
-        uses: actions/upload-artifact@v4   # ✅ updated action
+        uses: actions/upload-artifact@v4
         with:
           name: github-pages
-          path: ./dist
+          path: dist   # ✅ ONLY dist, not the whole repo
 
   deploy:
     needs: build
@@ -41,4 +44,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4   # ✅ updated action
+        uses: actions/deploy-pages@v4
