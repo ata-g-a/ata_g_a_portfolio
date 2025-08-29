@@ -23,15 +23,19 @@ jobs:
       - name: Build site
         run: npm run build
 
-      # ✅ Add a .nojekyll file to dist
+      # ✅ Add .nojekyll file
       - name: Add .nojekyll
         run: echo "" > dist/.nojekyll
 
-      # ✅ Debug: list dist contents
-      - name: Debug dist folder
-        run: ls -R dist
+      # ✅ Debug: show dist folder
+      - name: Show dist folder contents
+        run: |
+          echo "==== DIST CONTENTS ===="
+          ls -lah dist
+          echo "==== DIST STRUCTURE ===="
+          tree dist || true
 
-      # ✅ Clean dist folder (remove symlinks/dev artifacts)
+      # ✅ Clean dist folder
       - name: Clean dist folder
         run: |
           find dist -type l -delete
@@ -43,7 +47,7 @@ jobs:
         with:
           name: github-pages
           path: dist
-          if-no-files-found: error   # fail fast if dist is empty
+          if-no-files-found: error
 
   deploy:
     needs: build
