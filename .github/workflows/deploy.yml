@@ -1,15 +1,15 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy Astro site to GitHub Pages (Peaceiris)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]   # change if your branch is different
   workflow_dispatch:
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -23,42 +23,12 @@ jobs:
       - name: Build site
         run: npm run build
 
-      # ✅ Add .nojekyll file
+      # ✅ Add .nojekyll
       - name: Add .nojekyll
         run: echo "" > dist/.nojekyll
 
-      # ✅ Debug: show dist folder
-      - name: Show dist folder contents
-        run: |
-          echo "==== DIST CONTENTS ===="
-          ls -lah dist
-          echo "==== DIST STRUCTURE ===="
-          tree dist || true
-
-      # ✅ Clean dist folder
-      - name: Clean dist folder
-        run: |
-          find dist -type l -delete
-          rm -rf dist/.astro
-          rm -rf dist/node_modules
-
-      - name: Upload dist folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path: dist
-          if-no-files-found: error
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
