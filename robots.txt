@@ -1,0 +1,7 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://ata-g-a.github.io/ata_g_a_portfolio/sitemap-index.xml
+
+
