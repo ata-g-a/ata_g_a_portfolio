@@ -1,4 +1,4 @@
-name: Deploy Astro site to GitHub Pages (Peaceiris)
+name: Deploy Astro site to GitHub Pages
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -23,12 +23,42 @@ jobs:
       - name: Build site
         run: npm run build
 
-      # ✅ Add .nojekyll
+      # ✅ Add .nojekyll to bypass Jekyll
       - name: Add .nojekyll
         run: echo "" > dist/.nojekyll
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # ✅ Debug dist folder
+      - name: Show dist folder contents
+        run: |
+          echo "==== DIST CONTENTS ===="
+          ls -lah dist
+          echo "==== DIST STRUCTURE ===="
+          tree dist || true
+
+      # ✅ Clean unwanted stuff
+      - name: Clean dist folder
+        run: |
+          find dist -type l -delete
+          rm -rf dist/.astro
+          rm -rf dist/node_modules
+
+      - name: Upload dist folder
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          name: github-pages
+          path: dist
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
