@@ -38,10 +38,14 @@ jobs:
       # ✅ Clean unwanted stuff
       - name: Clean dist folder
         run: |
+          # Remove all symlinks (files and directories)
+          find dist -xtype l -delete
           find dist -type l -delete
-          rm -rf dist/.astro
-          rm -rf dist/node_modules
-
+          # Remove unwanted folders
+          rm -rf dist/.astro dist/node_modules
+          # Show any remaining symlinks (should be empty)
+          echo "Symlinks remaining in dist:"
+          find dist -type l
       - name: Upload dist folder
         uses: actions/upload-artifact@v4
         with:
